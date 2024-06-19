@@ -5,14 +5,30 @@ import {
   FormGroup,
   FormControlLabel,
 } from "@mui/material";
+import { useState, useContext } from "react";
+import { selectContext } from "../Context/SelectProvider";
 
 type Sport = {
-  setSport: string;
+  selectSport: string[];
 };
 
-const CourtSelector = ({ setSport }: Sport) => {
-  let sports = new Array<string>();
-  sports = ["Tennis", "Volleyball"];
+// const CourtSelector = ({ selectSport }: Sport) => {
+const CourtSelector = () => {
+  const sportsList: Array<string> = ["Tennis", "Volleyball"];
+  // const [sports, setSports] = useState([] as String[]);
+  const { sport, setSport } = useContext(selectContext);
+  const handleChange = (val: String) => {
+    if (sport?.includes(val)) {
+      const index: number = sport.indexOf(val);
+      const newList: String[] = [
+        ...sport.slice(0, index),
+        ...sport.slice(index + 1),
+      ];
+      setSport(newList);
+    } else {
+      setSport((sport) => [...sport, val]);
+    }
+  };
 
   return (
     <Box
@@ -30,8 +46,14 @@ const CourtSelector = ({ setSport }: Sport) => {
       }}
     >
       <FormGroup>
-        {sports.map((val) => (
-          <FormControlLabel control={<Checkbox />} label={val} />
+        {sportsList.map((val) => (
+          <FormControlLabel
+            control={<Checkbox value={val} name={val.toLowerCase()} />}
+            label={val}
+            onChange={(item) => {
+              handleChange((item.target as HTMLTextAreaElement).name);
+            }}
+          />
         ))}
       </FormGroup>
     </Box>
